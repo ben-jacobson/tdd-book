@@ -37,7 +37,7 @@ class NewVistitorTest(unittest.TestCase):                   # inherits from unit
 
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list table
-        inputbox.send_keys(keys.ENTER)
+        inputbox.send_keys(Keys.ENTER)
         sleep(1)
 
         table = self.browser.find_element_by_id('id_list_table')
