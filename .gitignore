@@ -3,5 +3,6 @@ geckodriver.log
 superlists/__pycache__/**
 lists/__pycache__/**
 .vscode/**
-ft.sh
-ut.sh
+ft
+ut
+lists/migrations/__pycache__/**
