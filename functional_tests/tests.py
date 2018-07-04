@@ -1,24 +1,40 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 import time
 #import unittest
+
+MAX_WAIT = 10
 
 class NewVistitorTest(LiveServerTestCase):                   # inherits from unittest.TestCase which lays out the framework for unit testing
 
     def setUp(self):
         self.browser = webdriver.Firefox()
-        time.sleep(1)                                            # encountering a bug wher making changes to the web driver too soon causes a pipe error
+        #time.sleep(1)                                            # sometimes encountering a bug wher making changes to the web driver too soon causes a pipe error
         self.browser.set_page_load_timeout(30)
 
     def tearDown(self):                                     # setup and tearDown are inherited from unittest.TestCase and overwritten to perform specific functions that we control
         self.browser.quit()
 
-    # helper function, refactoring a piece of code that is re-used 3 times in these tests
-    def check_for_row_in_list_table(self, row_text):
+    '''def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertIn(row_text, [row.text for row in rows])
+        self.assertIn(row_text, [row.text for row in rows])'''
+
+    # helper function, refactoring a piece of code that is re-used 3 times in these tests
+    def wait_for_row_in_list_table(self, row_text):
+        start_time = time.time()
+        while True:
+            try: 
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name('tr')
+                self.assertIn(row_text, [row.text for row in rows]) 
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
     # any method within the test case class starting with 'test' will be automatically run
     def test_can_start_a_list_and_retrieve_it_later(self):  
@@ -46,8 +62,7 @@ class NewVistitorTest(LiveServerTestCase):                   # inherits from uni
         # When she hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list table
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
 
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very
@@ -55,11 +70,10 @@ class NewVistitorTest(LiveServerTestCase):                   # inherits from uni
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # The page updates again, and now shows both items on her list
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
-        self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
+        self.wait_for_row_in_list_table('1: Buy peacock feathers')
+        self.wait_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
         # Edith wonders whether the site will remember her list. Then she sees
         # that the site has generated a unique URL for her -- there is some 
