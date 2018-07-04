@@ -6,3 +6,4 @@ lists/__pycache__/**
 ft
 ut
 lists/migrations/__pycache__/**
+functional_tests/__pycache__/
