@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 import time
-#import unittest
+import os
 
 MAX_WAIT = 10
 
@@ -13,6 +13,11 @@ class NewVistitorTest(StaticLiveServerTestCase):                   # inherits fr
         self.browser = webdriver.Firefox()
         #time.sleep(1)                                            # sometimes encountering a bug wher making changes to the web driver too soon causes a pipe error
         self.browser.set_page_load_timeout(30)
+
+        staging_server = os.environ.get('STAGING_SERVER')
+
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server    
 
     def tearDown(self):                                     # setup and tearDown are inherited from unittest.TestCase and overwritten to perform specific functions that we control
         self.browser.quit()
