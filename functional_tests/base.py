@@ -19,7 +19,7 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
     def tearDown(self):                                     # setup and tearDown are inherited from unittest.TestCase and overwritten to perform specific functions that we control
         self.browser.quit()
 
-    # helper function, refactoring a piece of code that is re-used 3 times in these tests
+    # helper functions for functional_testing
     def wait_for_row_in_list_table(self, row_text):
         start_time = time.time()
         while True:
@@ -28,6 +28,16 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
                 rows = table.find_elements_by_tag_name('tr')
                 self.assertIn(row_text, [row.text for row in rows]) 
                 return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5) 
+    
+    def wait_for(self, fn):
+        start_time = time.time()
+        while True:
+            try: 
+                return fn()
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
