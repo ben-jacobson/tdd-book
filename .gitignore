@@ -9,3 +9,7 @@ at
 lists/migrations/__pycache__/**
 functional_tests/__pycache__/
 
+SSHStaging
+TempStagingServer.pem
+aws_fingerprint
+ft_staging
