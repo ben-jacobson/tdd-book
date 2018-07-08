@@ -13,3 +13,4 @@ SSHStaging
 TempStagingServer.pem
 aws_fingerprint
 ft_staging
+deploy_tools/__pycache__/
