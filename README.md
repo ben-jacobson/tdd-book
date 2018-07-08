@@ -1,4 +1,5 @@
 # tdd-book
+July 2018
 Code examples from O'Reilly Book 'Test-Driven Development with Python'  
 
 Test-Driven Development with Python book by Harry Percival has you follow code examples to develop a simple Django driven To-Do list app.
