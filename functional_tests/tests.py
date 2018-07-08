@@ -14,7 +14,7 @@ class NewVistitorTest(StaticLiveServerTestCase):                   # inherits fr
         #time.sleep(1)                                            # sometimes encountering a bug wher making changes to the web driver too soon causes a pipe error
         self.browser.set_page_load_timeout(30)
 
-        staging_server = os.environ.get('STAGING_SERVER')
+        staging_server = os.environ.get('STAGING_SERVER')           # relies on a one-time setting of environment variables. Without using "export VAR_NAME", the variable will reset immediately after exection
 
         if staging_server:
             self.live_server_url = 'http://' + staging_server    
@@ -53,7 +53,7 @@ class NewVistitorTest(StaticLiveServerTestCase):                   # inherits fr
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
-            delta=10
+            delta=15
         )
 
         # She starts a new list and sees that input is nicely
@@ -67,7 +67,7 @@ class NewVistitorTest(StaticLiveServerTestCase):                   # inherits fr
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
             512,
-            delta=10
+            delta=15
         )
 
 
