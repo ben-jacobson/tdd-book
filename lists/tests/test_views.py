@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.utils.html import escape
 from lists.models import Item, List
+from lists.forms import ItemForm
 
 # Create your tests here.
 
@@ -49,7 +50,12 @@ class HomePageTest(TestCase):
 
         self.assertIn('itemey 1', response.content.decode())
         self.assertIn('itemey 2', response.content.decode())'''
-    
+
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
+        #print(response.context['form'])
+        self.assertIsInstance(response.context['form'], ItemForm)
+
 class ListViewTest(TestCase):
     def test_uses_list_template(self):
         list_ = List.objects.create()

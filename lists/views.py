@@ -1,5 +1,6 @@
 from django.shortcuts import redirect, render
 from django.core.exceptions import ValidationError
+from lists.forms import ItemForm
 from lists.models import Item, List
 
 # Create your views here.
@@ -7,7 +8,7 @@ def home_page(request):
     #if request.method == 'POST':
     #    Item.objects.create(text=request.POST['item_text'])
     #    return redirect('/lists/the-only-list-in-the-world/')  # always re-direct a POST request, https://en.wikipedia.org/wiki/Post/Redirect/Get
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'form': ItemForm()})
 
 def new_list(request):
     list_ = List.objects.create()
