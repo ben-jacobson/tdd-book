@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 from lists.models import Item, List
 
 # Create your tests here.
@@ -30,3 +31,21 @@ class ListAndItemModelTest(TestCase):
         self.assertEqual(first_saved_item.list, list_)
         self.assertEqual(second_saved_item.text, 'Item the second')
         self.assertEqual(second_saved_item.list, list_)
+
+    def test_cannot_save_empty_list_items(self):
+        list_ = List.objects.create()
+        item = Item(list=list_, text='')
+
+        ''' 
+        # as opposed to doing something like this:
+        try :
+            item.save()
+            self.fail('the save should have raised an exception)
+        except ValidationError:
+            pass
+
+        # we can use Python's built in context manager, With, to wrap the code and make it a bit more readable. 
+        '''
+        with self.assertRaises(ValidationError):
+            item.save()
+            item.full_clean() # not quite able to get my head around this one, see page 220. something to do with how Django does data validation? V0od0o!!1
