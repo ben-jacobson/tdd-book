@@ -8,7 +8,6 @@ MAX_WAIT = 10
 class FunctionalTest(StaticLiveServerTestCase):                   # inherits from unittest.TestCase which lays out the framework for unit testing
     def setUp(self):
         self.browser = webdriver.Firefox()
-        #time.sleep(1)                                            # sometimes encountering a bug wher making changes to the web driver too soon causes a pipe error
         self.browser.set_page_load_timeout(30)
 
         staging_server = os.environ.get('STAGING_SERVER')           # relies on a one-time setting of environment variables. Without using "export VAR_NAME", the variable will reset immediately after exection

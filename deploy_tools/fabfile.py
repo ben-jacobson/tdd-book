@@ -49,6 +49,9 @@ def _update_database(source_folder):
         ' && ../virtualenv/bin/python manage.py migrate --noinput'
     )
 
+def _restart_gunicorn_service():
+    run("sudo systemctl restart gunicorn-superlists-jacobson.tech.service")
+
 def deploy():
     site_folder = f'/home/{env.user}/sites/{env.host}'
     source_folder = site_folder + '/source'
@@ -58,5 +61,6 @@ def deploy():
     _update_virtual_env(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
+    _restart_gunicorn_service()
 
 
