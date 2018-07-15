@@ -16,3 +16,4 @@ ft_staging
 deploy_tools/__pycache__/
 lists/tests/__pycache__/**
 deploy
+SetEmailPasswords
