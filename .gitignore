@@ -7,13 +7,16 @@ ft
 ut
 at
 lists/migrations/__pycache__/**
-functional_tests/__pycache__/
+functional_tests/__pycache__/**
 
 SSHStaging
 TempStagingServer.pem
 aws_fingerprint
 ft_staging
-deploy_tools/__pycache__/
+deploy_tools/__pycache__/**
 lists/tests/__pycache__/**
 deploy
 SetEmailPasswords
+accounts/__pycache__/**
+accounts/migrations/__pycache__/**
+accounts/tests/__pycache__/**
