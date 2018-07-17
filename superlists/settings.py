@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = [
+    'accounts.authentication.PasswordlessAuthenticationBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,6 +127,23 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, '../static'))
 
+
+# details needed for the app to send emails. For privacy reasons, we'll store these details in the environment variables
+EMAIL_HOST = "smtp.gmail.com"                       # it's taken quite a bit of a hack to get this right, therefore our code is only relevant for sendi$
+
+# Gmail has two options, TLS:
+#EMAIL_USE_TLS = True                                # set this as you see fit    
+#EMAIL_PORT = 587                               # using SMTP SSL, change this if necessary
+
+# OR SSL
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465      
+
+# now configure the remaining globals needed for email
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') 
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')     
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'     # unsure what this does at this stage
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'        # for debugging, set this. All email content will simply go to console out
 
 #logging settings
 

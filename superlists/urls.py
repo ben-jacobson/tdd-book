@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from lists import views as list_views
 from lists import urls as list_urls
+from accounts import urls as accounts_urls
 #from django.contrib import admin
 
 # in this project, by convention we are using urls without trailing slashes to indicate that this endpoint will modify the database in some way.
@@ -23,5 +24,6 @@ from lists import urls as list_urls
 urlpatterns = [
     #url(r'^admin/', admin.site.urls),
     url(r'^$', list_views.home_page, name='home'),
-    url(r'^lists/', include(list_urls)),    
+    url(r'^lists/', include(list_urls)),   
+    url(r'^accounts/', include(accounts_urls)),    
 ]
