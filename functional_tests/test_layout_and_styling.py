@@ -1,7 +1,7 @@
 from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
 
-import time
+#import time
 
 class LayoutAndStylingTest(FunctionalTest):
     def test_layout_and_styling(self):
