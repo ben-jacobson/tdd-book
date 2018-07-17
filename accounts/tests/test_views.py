@@ -31,9 +31,11 @@ class SendLoginEmailViewTest(TestCase):
 
         self.assertEqual(mock_send_mail.called, True)
         (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
+        self.assertIn("link", body)
         self.assertEqual(subject, 'Your login link for Superlists')
         self.assertEqual(from_email, getattr(settings, "EMAIL_HOST_USER", None))
         self.assertEqual(to_list, ['edith@example.com'])
+        self.assertIn('auth_user', kwargs)     # actually, this is just to get linter to shutup about unused variables.
 
     def test_creates_token_associated_with_email(self):
         self.client.post('/accounts/send_login_email', data={
@@ -51,7 +53,11 @@ class SendLoginEmailViewTest(TestCase):
         token = Token.objects.first()
         expected_url = f'http://testserver/accounts/login?token={token.uid}'
         (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args        
-        self.assertIn(expected_url, body) 
+        self.assertIn(expected_url, body)  
+        self.assertEqual(subject, 'Your login link for Superlists') # don't really need to test these, just to get our linter to shut up about unused variables
+        self.assertEqual(from_email, getattr(settings, "EMAIL_HOST_USER", None))
+        self.assertEqual(to_list, ['edith@example.com'])             
+        self.assertIn('auth_user', kwargs)     # actually, this is just to get linter to shutup about unused variables.
 
 @patch('accounts.views.auth')
 class LoginViewTest(TestCase):

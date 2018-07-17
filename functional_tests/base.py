@@ -5,6 +5,19 @@ import time, os
 
 MAX_WAIT = 10
 
+# used as a decorator for a few functions in the class below
+def wait(fn):
+    def modified_fn(*args, **kwargs):  
+        start_time = time.time()
+        while True:
+            try:
+                return fn(*args, **kwargs)  
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
+    return modified_fn
+
 class FunctionalTest(StaticLiveServerTestCase):                   # inherits from unittest.TestCase which lays out the framework for unit testing
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -69,18 +82,6 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
         return self.browser.find_element_by_id('id_text')
 
     # we've refactored some code to make use of decorators, here is the base function, below have been tagged 
-
-    def wait(fn):
-        def modified_fn(*args, **kwargs):  
-            start_time = time.time()
-            while True:
-                try:
-                    return fn(*args, **kwargs)  
-                except (AssertionError, WebDriverException) as e:
-                    if time.time() - start_time > MAX_WAIT:
-                        raise e
-                    time.sleep(0.5)
-        return modified_fn
 
     @wait
     def wait_for(self, fn):
