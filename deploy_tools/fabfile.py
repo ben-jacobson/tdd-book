@@ -50,6 +50,7 @@ def _update_database(source_folder):
     )
 
 def _restart_gunicorn_service():
+    run("sudo systemctl daemon-reload")
     run("sudo systemctl restart gunicorn-superlists-jacobson.tech.service")
 
 def deploy():

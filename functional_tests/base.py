@@ -1,3 +1,4 @@
+from .server_tools import reset_database  
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
@@ -6,7 +7,7 @@ import time, os
 MAX_WAIT = 10
 
 # used as a decorator for a few functions in the class below
-def wait(fn):
+def wait(fn): 
     def modified_fn(*args, **kwargs):  
         start_time = time.time()
         while True:
@@ -21,12 +22,10 @@ def wait(fn):
 class FunctionalTest(StaticLiveServerTestCase):                   # inherits from unittest.TestCase which lays out the framework for unit testing
     def setUp(self):
         self.browser = webdriver.Firefox()
-        self.browser.set_page_load_timeout(30)
-
-        staging_server = os.environ.get('STAGING_SERVER')           # relies on a one-time setting of environment variables. Without using "export VAR_NAME", the variable will reset immediately after exection
-
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server    
+        self.staging_server = os.environ.get('STAGING_SERVER')
+        if self.staging_server:
+            self.live_server_url = 'http://' + self.staging_server
+            reset_database(self.staging_server) 
 
     def tearDown(self):                                     # setup and tearDown are inherited from unittest.TestCase and overwritten to perform specific functions that we control
         self.browser.quit()
