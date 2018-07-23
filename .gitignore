@@ -21,3 +21,4 @@ accounts/__pycache__/**
 accounts/migrations/__pycache__/**
 accounts/tests/__pycache__/**
 ut_staging
+SSHJenkins
