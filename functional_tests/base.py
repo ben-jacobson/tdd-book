@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 import time, os 
 from datetime import datetime
 
-MAX_WAIT = 10
+MAX_WAIT = 20
 
 SCREEN_DUMP_LOCATION = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'screendumps'
@@ -71,7 +71,7 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
             windowid=self._windowid,
             timestamp=timestamp
         )
-        
+
     '''
     def wait_for_row_in_list_table(self, row_text):
         start_time = time.time()
