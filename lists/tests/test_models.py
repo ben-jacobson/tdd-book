@@ -44,7 +44,7 @@ class ListAndItemModelTest(TestCase):
             item = Item(list_, text='bla')
             item.full_clean()
 
-    def test_CAN_save_same_item_to_different_lists(self):
+    def test_can_save_same_item_to_different_lists(self):
         list1 = List.objects.create()
         list2 = List.objects.create()
         Item.objects.create(list=list1, text='bla')
@@ -100,4 +100,36 @@ class ListModelTest(TestCase):
         Item.objects.create(list=list_, text='first item')
         Item.objects.create(list=list_, text='second item')
         self.assertEqual(list_.name, 'first item')
+    
+    def test_list_shared_with_add_method(self):
+        list_ = List.objects.create()
+        sharee = User.objects.create(email='share@bc.com')
+        list_.shared_with.add(sharee)
+        self.assertIn(sharee, list_.shared_with.all())
+
+    def test_shared_with_add_functionality(self):
+        new_user_email_one = 'ben_jacobson@live.com'
+        new_user_email_two = 'user@example.com'
+
+        # Create the users
+        user_one = User.objects.create(email=new_user_email_one)
+        user_two = User.objects.create(email=new_user_email_two)
+
+        # create two lists
+        list_one = List.create_new(first_item_text="list_one", owner=user_one)
+        list_two = List.create_new(first_item_text="list_two", owner=user_two)
+
+        # test that the users have been created
+        self.assertEqual(list_one.owner.email, new_user_email_one)
+        self.assertEqual(list_two.owner.email, new_user_email_two)
+
+        # attempt to link the two by sharing one list with the other
+        list_one.shared_with.add(user_two)
+
+        # prove that it worked:
+        shared_with_email_test = list_one.shared_with.all().first().email
+        self.assertEqual(shared_with_email_test, new_user_email_two)
+
+        # Since the 'My lists' page relies on list ownership, check that ownership is correct also
+        
 

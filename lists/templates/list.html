@@ -6,8 +6,25 @@
 
 {% block table %}
 	<table id="id_list_table" class='table'>
-		{% for item in list.item_set.all %}		{% comment %} See how we use item_set.all? this is a built in Django ORM feature that allows you to do reverse lookup, very powerful, very cool {% endcomment %}
+		{% for item in list.item_set.all %}		{% comment %} See how we use item_set.all? this is a built in Django ORM feature _set that allows you to do reverse lookup, very powerful, very cool {% endcomment %}
 			<tr><td>{{ forloop.counter }}: {{ item.text }}</td></tr>
 		{% endfor %}
 	</table>
+	<div class="container-fluid">
+		<div class="nav navbar-nav navbar-left">
+			<h2>List shared with:</h2>
+			<ul>
+				{% for sharee in list.shared_with.all %}		
+					<li class='list-sharee'>{{ sharee.email }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="nav navbar-nav navbar-right">
+			<form method="POST" action="{% url 'share_list' list.id %}">
+				<h2>Share this list</h2>
+				<input class="form-control" name="sharee" type="text" placeholder="your-friend@example.com" />
+				{% csrf_token %}
+			</form>
+		</div>
+	</div>		
 {% endblock %}

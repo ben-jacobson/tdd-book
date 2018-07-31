@@ -1,5 +1,8 @@
 from selenium.webdriver.common.keys import Keys
 from .base import FunctionalTest
+from .list_page import ListPage
+
+from time import sleep
 
 class ItemValidationTest(FunctionalTest):
 
@@ -11,10 +14,12 @@ class ItemValidationTest(FunctionalTest):
     ## unit tests
 
     def test_cannot_add_empty_list_items(self):
+        list_page = ListPage(self)
+
         # Edith goes to the home page and accidentally tries to submit
         # an empty list item. She hits Enter on the empty input box
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
 
         # The browser intercepts the request, and does not load the
         # list page
@@ -23,43 +28,45 @@ class ItemValidationTest(FunctionalTest):
         ))
 
         # She starts typing some text for the new item and the error disappears
-        self.get_item_input_box().send_keys('Buy milk')
+        list_page.get_item_input_box().send_keys('Buy milk')
         self.wait_for(lambda: self.browser.find_elements_by_css_selector(
             '#id_text:valid'
         ))
 
         # And she can submit it successfully
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy milk')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.wait_for_row_in_list_table('Buy milk', 1)
 
         # Perversely, she now decides to submit a second blank list item
-        self.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
 
         # Again, the browser will not comply
-        self.wait_for_row_in_list_table('1: Buy milk')
+        list_page.wait_for_row_in_list_table('Buy milk', 1)
         self.wait_for(lambda: self.browser.find_elements_by_css_selector(
             '#id_text:invalid'
         ))
 
         # And she can correct it by filling some text in
-        self.get_item_input_box().send_keys('Make tea')
+        list_page.get_item_input_box().send_keys('Make tea')
         self.wait_for(lambda: self.browser.find_elements_by_css_selector(
             '#id_text:valid'
         ))
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy milk')
-        self.wait_for_row_in_list_table('2: Make tea')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.wait_for_row_in_list_table('Buy milk', 1)
+        list_page.wait_for_row_in_list_table('Make tea', 2)
 
     def test_cannot_add_duplicate_items(self):
+        list_page = ListPage(self)
+
         # Edith goes to the home page and starts a new list
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Buy wellies')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Buy wellies')
+        list_page.get_item_input_box().send_keys('Buy wellies')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.wait_for_row_in_list_table('Buy wellies', 1)
         
         # She accidentally tries to add a duplicate item
-        self.get_item_input_box().send_keys('Buy wellies')
-        self.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.get_item_input_box().send_keys('Buy wellies')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
         
         # She sees a helpful error message
         self.wait_for(lambda: self.assertEqual(
@@ -68,20 +75,23 @@ class ItemValidationTest(FunctionalTest):
         ))
 
     def test_error_messages_are_cleared_on_input(self):
+        list_page = ListPage(self)
+
         # Edith starts a list and causes a validation error:
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Banter too thick')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_row_in_list_table('1: Banter too thick')
-        self.get_item_input_box().send_keys('Banter too thick')
-        self.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.get_item_input_box().send_keys('Banter too thick')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
+        list_page.wait_for_row_in_list_table('Banter too thick', 1)
+        list_page.get_item_input_box().send_keys('Banter too thick')
+        list_page.get_item_input_box().send_keys(Keys.ENTER)
 
         self.wait_for(lambda: self.assertTrue(
             self.get_error_element().is_displayed()
         ))
 
         # She starts typing in the input box to clear the error
-        self.get_item_input_box().send_keys('a')
+        sleep(0.25) # this test needs a small delay, or else triggers a false positive
+        list_page.get_item_input_box().send_keys('a')
 
         # She is pleased to see that the error message disappears
         self.wait_for(lambda: self.assertFalse(

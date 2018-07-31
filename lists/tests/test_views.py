@@ -157,11 +157,11 @@ class ListViewTest(TestCase):
         self.assertContains(response, 'name="text"')
 
     def post_invalid_input(self):
-            list_ = List.objects.create()
-            return self.client.post(
-                f'/lists/{list_.id}/',
-                data={'text': ''}
-            )
+        list_ = List.objects.create()
+        return self.client.post(
+            f'/lists/{list_.id}/',
+            data={'text': ''}
+        )
 
     def test_for_invalid_input_nothing_saved_to_db(self):
         self.post_invalid_input()
@@ -205,3 +205,31 @@ class MyListsTest(TestCase):
         response = self.client.get('/lists/users/a@b.com/')
         self.assertEqual(response.context['owner'], correct_user)        
 
+class SharingTest(TestCase):
+    def test_post_redirects_to_list_page(self):
+        list_ = List.objects.create()
+
+        response = self.client.post(
+            f'/lists/{list_.id}/share',
+            data={'sharee': 'share@ab.com'}
+        )
+        #self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, list_.get_absolute_url())    
+
+    def test_created_user_appears_on_shared_list(self):
+        sharee = User.objects.create(email='sharee@ab.com')
+        # do we need to get a logged in user? 
+        list_ = List.objects.create()
+
+        self.client.post(
+            f'/lists/{list_.id}/share',
+            data={'sharee': sharee.email}
+        )
+        self.assertIn(sharee, list_.shared_with.all())
+
+
+
+
+
+
+    

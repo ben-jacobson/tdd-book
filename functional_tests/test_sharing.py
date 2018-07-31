@@ -1,46 +1,46 @@
-from selenium import webdriver
 from .base import FunctionalTest
 from .list_page import ListPage
 from .my_lists_page import MyListsPage
 
-
 def quit_if_possible(browser):
-    try: browser.quit()
-    except: pass
-
+    #try: browser.quit()
+    #except: pass
+    browser.quit()
 
 class SharingTest(FunctionalTest):
-
-    def test_can_share_a_list_with_another_user(self):
+    def test_can_share_a_list_with_another_user_pt1(self):
+        list_page = ListPage(self)
+        
         # Edith is a logged-in user
         self.create_pre_authenticated_session('edith@example.com')
-        edith_browser = self.browser
-        self.addCleanup(lambda: quit_if_possible(edith_browser))
-
-        # Her friend Oniciferous is also hanging out on the lists site
-        oni_browser = webdriver.Firefox()
-        self.addCleanup(lambda: quit_if_possible(oni_browser))
-        self.browser = oni_browser
-        self.create_pre_authenticated_session('oniciferous@example.com')
 
         # Edith goes to the home page and starts a list
-        self.browser = edith_browser
         self.browser.get(self.live_server_url)
-        list_page = ListPage(self).add_list_item('Get help')        
-
+    
+        list_page.add_list_item('Get help')
+        
         # She notices a "Share this list" option
         share_box = list_page.get_share_box()
+        
+        # and notices that the placeholder "your-friend@example.com" is present
         self.assertEqual(
             share_box.get_attribute('placeholder'),
             'your-friend@example.com'
         )
-
-        # She shares her list.
+        
+        # She shares her list by entering the email address of a friend
         # The page updates to say that it's shared with Oniciferous:
         list_page.share_list_with('oniciferous@example.com')
 
-        # Oniciferous now goes to the lists page with his browser
-        self.browser = oni_browser
+
+    # NOTE - in order for this to work, all 3 parts need to be made part of the same test. Because otherwise, the temporary database used is destroyed between tests, creating a false error
+    def test_can_share_a_list_with_another_user_pt2(self):
+        list_page = ListPage(self)
+
+        # Ediths friend Oniciferous is also hanging out on the lists site as a logged in user
+        self.create_pre_authenticated_session('oniciferous@example.com')
+
+        # Oniciferous goes to the lists page with his browser
         MyListsPage(self).go_to_my_lists_page()
 
         # He sees Edith's list in there!
@@ -55,8 +55,20 @@ class SharingTest(FunctionalTest):
         # He adds an item to the list
         list_page.add_list_item('Hi Edith!')
 
-        # When Edith refreshes the page, she sees Oniciferous's addition
-        self.browser = edith_browser
-        self.browser.refresh()
-        list_page.wait_for_row_in_list_table('Hi Edith!', 2)
+    def test_can_share_a_list_with_another_user_pt3(self):
+        list_page = ListPage(self)
 
+        # When Edith refreshes the page, she sees Oniciferous's addition
+        self.create_pre_authenticated_session('edith@example.com')
+
+        # Edith goes to the lists page in her browser
+        MyListsPage(self).go_to_my_lists_page()
+
+        # She clicks on the list that she created earlier
+        self.browser.find_element_by_link_text('Get help').click()
+
+        # And finds that Oniciferous has added something to her list
+        list_page.wait_for_row_in_list_table('Hi Edith!', 2)
+        
+    
+        

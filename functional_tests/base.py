@@ -1,15 +1,17 @@
-from .server_tools import reset_database  
+import os
+from datetime import datetime
+from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 #from selenium.webdriver.common.keys import Keys
-import time, os 
-from datetime import datetime
-from .server_tools import create_session_on_server
-from .management.commands.create_session import create_pre_authenticated_session 
-from django.conf import settings
+import time
 
-MAX_WAIT = 20
+from .server_tools import reset_database
+from .server_tools import create_session_on_server
+from .management.commands.create_session import create_pre_authenticated_session
+
+MAX_WAIT = 30
 
 SCREEN_DUMP_LOCATION = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'screendumps'
@@ -35,6 +37,8 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
         if self.staging_server:
             self.live_server_url = 'http://' + self.staging_server
             reset_database(self.staging_server) 
+        self.browser.implicitly_wait(MAX_WAIT)
+        self.browser.set_page_load_timeout(MAX_WAIT)
 
     def tearDown(self):                                     # setup and tearDown are inherited from unittest.TestCase and overwritten to perform specific functions that we control
         if self._test_has_failed():
@@ -88,18 +92,6 @@ class FunctionalTest(StaticLiveServerTestCase):                   # inherits fro
             windowid=self._windowid,
             timestamp=timestamp
         )
-
-    '''def get_item_input_box(self):
-        return self.browser.find_element_by_id('id_text')
-    '''
-
-    '''def add_list_item(self, item_text):
-        num_rows = len(self.browser.find_elements_by_css_selector('#id_list_table tr'))
-        self.get_item_input_box().send_keys(item_text)
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        item_number = num_rows + 1
-        self.wait_for_row_in_list_table(f'{item_number}: {item_text}')
-    '''
 
     # we've refactored some code to make use of decorators, here is the base function, below have been tagged 
 
