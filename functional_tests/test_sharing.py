@@ -33,9 +33,9 @@ class SharingTest(FunctionalTest):
         list_page.share_list_with('oniciferous@example.com')
 
 
-    # NOTE - in order for this to work, all 3 parts need to be made part of the same test. Because otherwise, the temporary database used is destroyed between tests, creating a false error
-    def test_can_share_a_list_with_another_user_pt2(self):
-        list_page = ListPage(self)
+    ## note - in order for this to work, all 3 parts need to be made part of the same test. Because otherwise, the temporary database used is destroyed between tests, creating a false error
+    #def test_can_share_a_list_with_another_user_pt2(self):
+    #    list_page = ListPage(self)
 
         # Ediths friend Oniciferous is also hanging out on the lists site as a logged in user
         self.create_pre_authenticated_session('oniciferous@example.com')
@@ -47,16 +47,16 @@ class SharingTest(FunctionalTest):
         self.browser.find_element_by_link_text('Get help').click()
 
         # On the list page, Oniciferous can see says that it's Edith's list
-        self.wait_for(lambda: self.assertEqual(
-            list_page.get_list_owner(),
-            'edith@example.com'
+        self.wait_for(lambda: self.assertIn(
+            'edith@example.com',
+            list_page.get_list_owner()
         ))
 
         # He adds an item to the list
         list_page.add_list_item('Hi Edith!')
 
-    def test_can_share_a_list_with_another_user_pt3(self):
-        list_page = ListPage(self)
+    #def test_can_share_a_list_with_another_user_pt3(self):
+    #    list_page = ListPage(self)
 
         # When Edith refreshes the page, she sees Oniciferous's addition
         self.create_pre_authenticated_session('edith@example.com')
