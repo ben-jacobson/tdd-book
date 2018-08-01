@@ -16,9 +16,9 @@ class NewVistitorTest(FunctionalTest):
 
         # She notices the page title and header mention to-do lists
         #assert 'To-Do' in browser.title, "Browser Title was '" + browser.title + "'"
-        self.assertIn('To-Do', self.browser.title)          # assertIn equivalent of 'if x in y' or assert 'x' in y:
+        self.assertIn('To-do', self.browser.title)          # assertIn equivalent of 'if x in y' or assert 'x' in y:
         header_text = self.browser.find_element_by_tag_name('h1').text
-        self.assertIn('To-Do', header_text)
+        self.assertIn('to-do', header_text)
 
         # She is invited to enter a to-do item straight away
         inputbox = list_page.get_item_input_box()

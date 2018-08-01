@@ -3,7 +3,7 @@
 {% block header_text %}
 	<div id="id_list_owner">
 		{% if list.owner.email == user.email %}
-			Your To-Do list
+			Your to-do list
 		{% else %}
 			{{ list.owner.email }}'s list
 		{% endif %}	
